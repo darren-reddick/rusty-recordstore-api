@@ -1,0 +1,29 @@
+[package]
+name = "rusty-recordstore-api"
+version = "0.1.0"
+authors = ["dreddick.home2@gmail.com <dreddick.home2@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+warp = "0.3"
+pretty_env_logger = "0.4.0"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+uuid = { version = "0.8", features = ["serde", "v4"] }
+http = "0.2.3"
+futures = "0.1.30"
+tk-http = "0.3.9"
+reqwest = "0.11.0"
+
+
+[lib]
+name = "storelib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "storebin"
+path = "src/main.rs"
+
