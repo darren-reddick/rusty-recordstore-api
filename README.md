@@ -53,7 +53,7 @@ Unit tests are defined within the same files as the functions they are testing.
 
 ### Integration Tests
 
-Integration tests are defined within the **tests/** directory.
+Integration tests are defined within the **tests/** directory and use the **tokio:test** runtime.
 
 ### Running tests
 
