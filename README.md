@@ -1,5 +1,11 @@
 # rusty-recordstore-api
 
+<p align="left">
+<img src="https://img.shields.io/github/v/release/darren-reddick/rusty-recordstore-api">
+<img src="https://github.com/darren-reddick/rusty-recordstore-api/workflows/Continuous%20integration/badge.svg">
+<img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
+</p>
+
 This is an example project using warp and tokio to create an API for managing the stock of a recordstore (as in music record store!!).
 
 <p align="left">
