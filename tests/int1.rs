@@ -2,7 +2,7 @@ extern crate storelib;
 
 use reqwest;
 use storelib::models;
-use storelib::routes::record_routes;
+use storelib::routes::item_routes;
 use tokio::sync::oneshot;
 
 #[tokio::test(flavor = "multi_thread")]
@@ -13,16 +13,16 @@ async fn simple_get_status_ok() {
 
   let db = models::inmemdb::init_db(None);
 
-  let record_routes = record_routes(db);
+  let item_routes = item_routes(db);
 
   let (addr, server) =
-    warp::serve(record_routes).bind_with_graceful_shutdown(([127, 0, 0, 1], 3030), async {
+    warp::serve(item_routes).bind_with_graceful_shutdown(([127, 0, 0, 1], 3030), async {
       rx.await.ok();
     });
 
   tokio::spawn(server);
 
-  let res = reqwest::get(&format!("http://{}/record", addr)).await;
+  let res = reqwest::get(&format!("http://{}/item", addr)).await;
 
   assert_eq!(res.unwrap().status(), reqwest::StatusCode::OK);
 
