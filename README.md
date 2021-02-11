@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is an example project using warp and tokio to create an API for searching the stock of a item store (as in music item store!!).
+This is an example project using warp and tokio to create an API for managing the stock of a recordstore (as in music record store!!).
 
 <p align="left">
 <img width="100" height="100" src="/assets/images/index.jpg">
