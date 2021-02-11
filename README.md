@@ -63,7 +63,7 @@ cargo t
 ```
 
 
-## Crate structure
+## Package Crate structure
 
 ```
 .
