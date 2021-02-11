@@ -4,67 +4,67 @@ use warp::{self, Filter};
 use crate::handlers;
 use crate::models;
 
-/// All record routes
-pub fn record_routes(
+/// All item routes
+pub fn item_routes(
   db: models::SafeDB,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-  get_record(db.clone())
-    .or(post_record(db.clone()))
-    .or(get_records(db.clone()))
-    .or(delete_record(db.clone()))
-    .or(update_record(db.clone()))
+  get_item(db.clone())
+    .or(post_item(db.clone()))
+    .or(get_items(db.clone()))
+    .or(delete_item(db.clone()))
+    .or(update_item(db.clone()))
 }
 
-/// GET /record
-fn get_records(
+/// GET /item
+fn get_items(
   db: models::SafeDB,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-  warp::path("record")
+  warp::path("item")
     .and(warp::get())
     .and(with_db(db))
-    .and_then(handlers::get_records)
+    .and_then(handlers::get_items)
 }
 
-/// GET /record/:uuid
-fn get_record(
+/// GET /item/:uuid
+fn get_item(
   db: models::SafeDB,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-  warp::path!("record" / String)
+  warp::path!("item" / String)
     .and(warp::get())
     .and(with_db(db))
-    .and_then(handlers::get_record)
+    .and_then(handlers::get_item)
 }
 
-/// DELETE /record/:uuid
-fn delete_record(
+/// DELETE /item/:uuid
+fn delete_item(
   db: models::SafeDB,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-  warp::path!("record" / String)
+  warp::path!("item" / String)
     .and(warp::delete())
     .and(with_db(db))
-    .and_then(handlers::delete_record)
+    .and_then(handlers::delete_item)
 }
 
-/// POST /record
-fn post_record(
+/// POST /item
+fn post_item(
   db: models::SafeDB,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-  warp::path("record")
+  warp::path("item")
     .and(warp::post())
     .and(with_db(db))
     .and(json_body())
-    .and_then(handlers::add_record)
+    .and_then(handlers::add_item)
 }
 
 /// PUT /people/:uuid
-fn update_record(
+fn update_item(
   db: models::SafeDB,
 ) -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
-  warp::path!("record" / String)
+  warp::path!("item" / String)
     .and(warp::put())
     .and(with_db(db))
     .and(json_body())
-    .and_then(handlers::update_record)
+    .and_then(handlers::update_item)
 }
 
 fn with_db(
@@ -73,7 +73,7 @@ fn with_db(
   warp::any().map(move || db.clone())
 }
 
-fn json_body() -> impl Filter<Extract = (models::Record,), Error = warp::Rejection> + Clone {
+fn json_body() -> impl Filter<Extract = (models::Item,), Error = warp::Rejection> + Clone {
   warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
 
@@ -84,11 +84,11 @@ mod tests {
 
   #[tokio::test]
   async fn test_get_empty() {
-    let filter = get_records(models::inmemdb::init_db(None));
+    let filter = get_items(models::inmemdb::init_db(None));
 
     // Execute `sum` and get the `Extract` back.
     let value = warp::test::request()
-      .path("/record/")
+      .path("/item/")
       .method("GET")
       .reply(&filter)
       .await;
@@ -98,21 +98,21 @@ mod tests {
 
   #[tokio::test]
   async fn test_get_people() {
-    let db = models::inmemdb::init_db(Some(vec![models::Record::new(
+    let db = models::inmemdb::init_db(Some(vec![models::Item::new(
       "Spastik".to_string(),
       "Plastikman".to_string(),
       "vinyl".to_string(),
       1994,
     )]));
-    let filter = get_records(db);
+    let filter = get_items(db);
 
     let res = warp::test::request()
-      .path("/record/")
+      .path("/item/")
       .method("GET")
       .reply(&filter)
       .await;
 
-    let people: Vec<models::Record> = serde_json::from_slice(res.body()).unwrap();
+    let people: Vec<models::Item> = serde_json::from_slice(res.body()).unwrap();
     assert_eq!(people[0].artist, "Plastikman");
 
     assert_eq!(res.status(), StatusCode::OK);
@@ -121,12 +121,12 @@ mod tests {
   #[tokio::test]
   async fn test_add_person() {
     let db = models::inmemdb::init_db(None);
-    let filter = post_record(db);
+    let filter = post_item(db);
 
     let res = warp::test::request()
-      .path("/record/")
+      .path("/item/")
       .method("POST")
-      .json(&models::Record::new(
+      .json(&models::Item::new(
         "Xpander".to_string(),
         "Sasha".to_string(),
         "cd".to_string(),
@@ -137,8 +137,8 @@ mod tests {
 
     assert_eq!(res.status(), StatusCode::OK);
 
-    let record: models::Record = serde_json::from_slice(res.body()).unwrap();
+    let item: models::Item = serde_json::from_slice(res.body()).unwrap();
 
-    assert_eq!(record.title, "Xpander")
+    assert_eq!(item.title, "Xpander")
   }
 }

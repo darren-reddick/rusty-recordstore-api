@@ -7,7 +7,7 @@ use tokio::sync::Mutex;
 use uuid::Uuid;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Record {
+pub struct Item {
   pub uuid: Option<String>,
   pub title: String,
   pub artist: String,
@@ -15,7 +15,7 @@ pub struct Record {
   pub year: u16,
 }
 
-impl Record {
+impl Item {
   pub fn add_uuid(&mut self) -> Result<String, &str> {
     match &self.uuid {
       None => {
@@ -26,8 +26,8 @@ impl Record {
       Some(_) => Err("UUID is already set"),
     }
   }
-  pub fn new(title: String, artist: String, format: String, year: u16) -> Record {
-    Record {
+  pub fn new(title: String, artist: String, format: String, year: u16) -> Item {
+    Item {
       uuid: None,
       title,
       artist,
@@ -40,11 +40,11 @@ impl Record {
 pub type SafeDB = Arc<Mutex<Box<dyn DB + Send>>>;
 
 pub trait DB {
-  fn get_records(&self) -> Vec<Record>;
-  fn add_record(&mut self, record: Record) -> Record;
-  fn get_record(&self, uuid: String) -> &Record;
-  fn delete_record(&mut self, uuid: String) -> Result<(), String>;
-  fn update_record(&mut self, uuid: String, record: Record) -> Result<(), String>;
+  fn get_items(&self) -> Vec<Item>;
+  fn add_item(&mut self, item: Item) -> Item;
+  fn get_item(&self, uuid: String) -> &Item;
+  fn delete_item(&mut self, uuid: String) -> Result<(), String>;
+  fn update_item(&mut self, uuid: String, item: Item) -> Result<(), String>;
 }
 
 #[cfg(test)]
@@ -55,21 +55,21 @@ mod tests {
   #[test]
   fn empty_database() {
     let db = inmemdb::Database {
-      record_table: HashMap::new(),
+      item_table: HashMap::new(),
     };
 
-    let records = db.get_records();
+    let items = db.get_items();
 
-    assert_eq!(records.len(), 0)
+    assert_eq!(items.len(), 0)
   }
 
   #[test]
   fn add_and_get_person() {
     let mut db = inmemdb::Database {
-      record_table: HashMap::new(),
+      item_table: HashMap::new(),
     };
 
-    let record = db.add_record(Record {
+    let item = db.add_item(Item {
       uuid: None,
       title: "Papua New Guinea".to_string(),
       artist: "Future Sound of London".to_string(),
@@ -77,9 +77,9 @@ mod tests {
       year: 1991,
     });
 
-    assert_eq!(record.year, 1991);
+    assert_eq!(item.year, 1991);
 
-    let get = db.get_record(record.uuid.unwrap());
+    let get = db.get_item(item.uuid.unwrap());
 
     assert_eq!(get.format, "vinyl");
   }
@@ -87,10 +87,10 @@ mod tests {
   #[test]
   fn add_and_delete_person() {
     let mut db = inmemdb::Database {
-      record_table: HashMap::new(),
+      item_table: HashMap::new(),
     };
 
-    let record = db.add_record(Record {
+    let item = db.add_item(Item {
       uuid: None,
       title: "Dark and Long".to_string(),
       artist: "Underworld".to_string(),
@@ -98,10 +98,10 @@ mod tests {
       year: 1993,
     });
 
-    assert_eq!(record.year, 1993);
+    assert_eq!(item.year, 1993);
 
-    let _ = db.delete_record(record.uuid.unwrap());
+    let _ = db.delete_item(item.uuid.unwrap());
 
-    assert_eq!(db.record_table.len(), 0);
+    assert_eq!(db.item_table.len(), 0);
   }
 }
