@@ -1,0 +1,10 @@
+output-type: html
+llvm: true
+branch: true
+ignore-not-existing: true
+output-path: ./target/debug/coverage/
+source-dir: .
+path-mapping:
+  - "./target/debug/"
+
+
