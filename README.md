@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
 </p>
 
-This is an example project using warp and tokio to create an API for managing the stock of a recordstore (as in music record store!!).
+This is an example web api project using warp and tokio to create an API for managing the stock of a recordstore (as in music record store!!).
 
 <p align="left">
 <img width="100" height="100" src="/assets/images/index.jpg">
