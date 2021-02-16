@@ -65,7 +65,7 @@ If the test response looks like the below then we are good!
 
 #### Unit Tests
 
-Unit tests are defined within the same files as the functions they are testing.
+Unit tests are defined alongside the functions they are testing.
 
 #### Integration Tests
 
