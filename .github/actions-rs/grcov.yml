@@ -1,0 +1,10 @@
+output-type: lcov
+output-path: ./lcov.info
+llvm: true
+branch: true
+ignore-not-existing: true
+source-dir: .
+path-mapping:
+  - "./target/debug/"
+
+
