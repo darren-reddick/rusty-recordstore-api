@@ -51,57 +51,16 @@ pub trait DB {
 mod tests {
 
     use super::*;
-    use std::collections::HashMap;
     #[test]
-    fn empty_database() {
-        let db = inmemdb::Database {
-            item_table: HashMap::new(),
-        };
-
-        let items = db.get_items();
-
-        assert_eq!(items.len(), 0)
-    }
-
-    #[test]
-    fn add_and_get_person() {
-        let mut db = inmemdb::Database {
-            item_table: HashMap::new(),
-        };
-
-        let item = db.add_item(Item {
-            uuid: None,
-            title: "Papua New Guinea".to_string(),
-            artist: "Future Sound of London".to_string(),
-            format: "vinyl".to_string(),
+    fn uuid_already_set() {
+        let mut item = Item {
+            uuid: Some("some_uuid".to_string()),
+            artist: "Orbital".to_string(),
+            title: "Chime".to_string(),
             year: 1991,
-        });
-
-        assert_eq!(item.year, 1991);
-
-        let get = db.get_item(item.uuid.unwrap());
-
-        assert_eq!(get.format, "vinyl");
-    }
-
-    #[test]
-    fn add_and_delete_person() {
-        let mut db = inmemdb::Database {
-            item_table: HashMap::new(),
+            format: "vinyl".to_string(),
         };
 
-        let item = db.add_item(Item {
-            uuid: None,
-            title: "Dark and Long".to_string(),
-            artist: "Underworld".to_string(),
-            format: "tape".to_string(),
-            year: 1993,
-        });
-
-        assert_eq!(item.year, 1993);
-
-        let _ = db.delete_item(item.uuid.unwrap());
-
-        assert_eq!(db.item_table.len(), 0);
+        assert_eq!(item.add_uuid(), Err("UUID is already set"))
     }
 }
