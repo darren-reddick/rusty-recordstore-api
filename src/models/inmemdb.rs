@@ -86,6 +86,16 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn get_nonexist_item() {
+        let db = inmemdb::Database {
+            item_table: HashMap::new(),
+        };
+
+        db.get_item("xxx-xxxx-xxxx-xxxx".to_string()).unwrap();
+    }
+
+    #[test]
     fn add_and_delete_item() {
         let mut db = inmemdb::Database {
             item_table: HashMap::new(),
