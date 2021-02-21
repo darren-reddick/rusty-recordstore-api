@@ -42,7 +42,7 @@ pub type SafeDB = Arc<Mutex<Box<dyn DB + Send>>>;
 pub trait DB {
     fn get_items(&self) -> Vec<Item>;
     fn add_item(&mut self, item: Item) -> Item;
-    fn get_item(&self, uuid: String) -> &Item;
+    fn get_item(&self, uuid: String) -> Result<&Item, &str>;
     fn delete_item(&mut self, uuid: String) -> Result<(), String>;
     fn update_item(&mut self, uuid: String, item: Item) -> Result<(), String>;
 }

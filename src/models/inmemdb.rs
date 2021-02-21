@@ -9,8 +9,12 @@ impl DB for Database {
     fn get_items(&self) -> Vec<Item> {
         self.item_table.values().cloned().collect::<Vec<Item>>()
     }
-    fn get_item(&self, uuid: String) -> &Item {
-        self.item_table.get(&uuid).unwrap()
+    fn get_item(&self, uuid: String) -> Result<&Item, &str> {
+        let ret = self.item_table.get(&uuid);
+        match ret {
+            None => Err("Could not get item"),
+            Some(_) => Ok(ret.unwrap()),
+        }
     }
     fn add_item(&mut self, mut item: Item) -> Item {
         let uuid = item.add_uuid().unwrap();
@@ -76,7 +80,7 @@ mod tests {
 
         assert_eq!(item.year, 1991);
 
-        let get = db.get_item(item.uuid.unwrap());
+        let get = db.get_item(item.uuid.unwrap()).unwrap();
 
         assert_eq!(get.format, "vinyl");
     }
@@ -131,7 +135,7 @@ mod tests {
             },
         );
 
-        let item = db.get_item(uuid.clone());
+        let item = db.get_item(uuid.clone()).unwrap();
 
         assert_eq!(item.year, 2002)
     }
