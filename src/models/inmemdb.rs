@@ -13,7 +13,7 @@ impl DB for Database {
         let ret = self.item_table.get(&uuid);
 
         match ret {
-            None => Err("Could not get item"),
+            None => Err("Item not found"),
             Some(_) => Ok(ret.unwrap()),
         }
     }
@@ -24,12 +24,18 @@ impl DB for Database {
         item
     }
     fn delete_item(&mut self, uuid: String) -> Result<(), String> {
-        self.item_table.remove(&uuid).unwrap();
-        Ok(())
+        let res = self.item_table.remove(&uuid);
+        match res {
+            Some(_) => Ok(()),
+            None => Err("Item not found".to_string()),
+        }
     }
     fn update_item(&mut self, uuid: String, item: Item) -> Result<(), String> {
-        self.item_table.insert(uuid, item);
-        Ok(())
+        let res = self.item_table.insert(uuid, item);
+        match res {
+            Some(_) => Ok(()),
+            None => Err("Item not found".to_string()),
+        }
     }
 }
 
@@ -94,6 +100,33 @@ mod tests {
         };
 
         db.get_item("xxx-xxxx-xxxx-xxxx".to_string()).unwrap();
+    }
+    #[test]
+    #[should_panic]
+    fn update_nonexist_item() {
+        let mut db = inmemdb::Database {
+            item_table: HashMap::new(),
+        };
+
+        let item = Item::new(
+            "Control".to_string(),
+            "Cinthie".to_string(),
+            "mp3".to_string(),
+            2020,
+        );
+
+        db.update_item("xxx-xxxx-xxxx-xxxx".to_string(), item)
+            .unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn delete_nonexist_item() {
+        let mut db = inmemdb::Database {
+            item_table: HashMap::new(),
+        };
+
+        db.delete_item("xxx-xxxx-xxxx-xxxx".to_string()).unwrap();
     }
 
     #[test]
