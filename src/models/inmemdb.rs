@@ -11,6 +11,7 @@ impl DB for Database {
     }
     fn get_item(&self, uuid: String) -> Result<&Item, &str> {
         let ret = self.item_table.get(&uuid);
+
         match ret {
             None => Err("Could not get item"),
             Some(_) => Ok(ret.unwrap()),

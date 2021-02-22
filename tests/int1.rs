@@ -28,3 +28,27 @@ async fn simple_get_status_ok() {
 
     let _ = tx.send(());
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn item_not_found() {
+    //pretty_env_logger::init();
+
+    let (tx, rx) = oneshot::channel();
+
+    let db = models::inmemdb::init_db(None);
+
+    let item_routes = item_routes(db);
+
+    let (addr, server) =
+        warp::serve(item_routes).bind_with_graceful_shutdown(([127, 0, 0, 1], 3031), async {
+            rx.await.ok();
+        });
+
+    tokio::spawn(server);
+
+    let res = reqwest::get(&format!("http://{}/item/xxxx-xxxxx-xxxx", addr)).await;
+
+    assert_eq!(res.unwrap().status(), reqwest::StatusCode::NOT_FOUND);
+
+    let _ = tx.send(());
+}

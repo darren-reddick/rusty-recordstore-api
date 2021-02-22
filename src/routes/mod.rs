@@ -86,7 +86,6 @@ mod tests {
     async fn test_get_empty() {
         let filter = get_items(models::inmemdb::init_db(None));
 
-        // Execute `sum` and get the `Extract` back.
         let value = warp::test::request()
             .path("/item/")
             .method("GET")
@@ -94,6 +93,18 @@ mod tests {
             .await;
         assert_eq!(value.body(), "[]");
         assert_eq!(value.status(), StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn test_get_nonexist() {
+        let filter = get_item(models::inmemdb::init_db(None));
+
+        let value = warp::test::request()
+            .path("/item/xxxx-xxxx-xxxx")
+            .method("GET")
+            .reply(&filter)
+            .await;
+        assert_eq!(value.status(), StatusCode::NOT_FOUND);
     }
 
     #[tokio::test]
